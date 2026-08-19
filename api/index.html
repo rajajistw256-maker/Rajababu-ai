@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BABU AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+    }
+
+    .app {
+      max-width: 700px;
+      height: 100vh;
+      margin: auto;
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    header p {
+      margin: 5px 0 0;
+    }
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .message {
+      margin: 10px 0;
+      display: flex;
+    }
+
+    .user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 12px 15px;
+      border-radius: 15px;
+      white-space: pre-wrap;
+    }
+
+    .babu .bubble {
+      background: #eeeeee;
+    }
+
+    .user .bubble {
+      background: #2563eb;
+      color: white;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 55px;
+      border: none;
+      border-radius: 10px;
+      background: #111827;
+      color: white;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>🤖 BABU AI</h1>
+    <p>Your Personal AI Assistant</p>
+  </header>
+
+  <div id="chat">
+    <div class="message babu">
+      <div class="bubble">
+        👋 Namaste bhai! Main BABU hoon.
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input id="messageInput" placeholder="BABU se kuch pucho...">
+    <button onclick="sendMessage()">➤</button>
+  </div>
+
+</div>
+
+<script>
+
+async function sendMessage() {
+
+  const input = document.getElementById("messageInput");
+  const chat = document.getElementById("chat");
+
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  addMessage(message, "user");
+
+  input.value = "";
+
+  addMessage("⏳ BABU soch raha hai...", "babu");
+
+  try {
+
+    const response = await fetch(
+      "https://rajababu-ai-azure.vercel.app/api/index",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: message
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    chat.lastElementChild.remove();
+
+    addMessage(
+      data.reply || "Bhai, kuch problem aa gayi.",
+      "babu"
+    );
+
+  } catch (error) {
+
+    chat.lastElementChild.remove();
+
+    addMessage(
+      "❌ BABU server se connection nahi ho paaya.",
+      "babu"
+    );
+  }
+}
+
+function addMessage(text, type) {
+
+  const message = document.createElement("div");
+  message.className = "message " + type;
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+
+  message.appendChild(bubble);
+
+  document.getElementById("chat").appendChild(message);
+
+  document.getElementById("chat").scrollTop =
+    document.getElementById("chat").scrollHeight;
+}
+
+document.getElementById("messageInput").addEventListener(
+  "keydown",
+  function(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  }
+);
+
+</script>
+
+</body>
+  </html>
