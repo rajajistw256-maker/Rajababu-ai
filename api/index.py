@@ -10,7 +10,7 @@ client = genai.Client(
 
 @app.route("/")
 def home():
-    return send_file("../index.html")
+    return send_file("index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
