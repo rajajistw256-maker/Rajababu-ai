@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import os
 from google import genai
 
@@ -10,7 +10,7 @@ client = genai.Client(
 
 @app.route("/")
 def home():
-    return "BABU Backend is running 🚀"
+    return send_file("../index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
